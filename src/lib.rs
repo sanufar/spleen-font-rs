@@ -1,5 +1,6 @@
 #![no_std]
 
+mod cache;
 pub mod psf;
 
 pub enum Size {
