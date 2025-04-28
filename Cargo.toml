@@ -1,6 +1,12 @@
 [package]
 name = "spleen-font"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+description = "A no_std PSF-2 bitmap font loader with Spleen fonts prepackaged."
+license = "MIT"
+repository = "https://github.com/sanufar/spleen-font-rs/"
+readme = "README.md"
+categories = ["fonts", "graphics", "rendering"]
+keywords = ["font", "bitmap", "psf2", "spleen", "no_std"]
 
 [dependencies]
