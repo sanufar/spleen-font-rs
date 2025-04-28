@@ -1,5 +1,7 @@
 # `spleen-font`  — tiny `no_std` PSF-2 bitmap‐font reader
 
+[![tests](https://github.com/sanufar/spleen-font-rs/actions/workflows/ci.yml/badge.svg)](https://github.com/sanufar/spleen-font-rs/actions/workflows/ci.yml)
+
 This crate ships the six **Spleen** fixed-width fonts and gives you a
 panic-free, heap-free API to render them on any framebuffer.
 
