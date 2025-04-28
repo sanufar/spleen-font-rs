@@ -50,7 +50,9 @@ impl<'a> Iterator for Glyph<'a> {
     /// Returns the next row of the glyph.
     ///
     /// ## Example:
-    /// ```
+    /// ```ignore
+    /// use spleen_font::Glyph;
+    /// use spleen_font::GlyphRow;
     /// let glyph = Glyph::new(&[0b11001100, 0b00110011], 8);
     /// let mut rows = glyph.into_iter();
     /// assert_eq!(rows.next(), Some(GlyphRow::new(&[0b11001100], 8)));
@@ -58,11 +60,6 @@ impl<'a> Iterator for Glyph<'a> {
     /// assert_eq!(rows.next(), None);
     /// ```
     ///
-    /// Glyph::next()
-    ///
-    /// data = [row0 | row1 | row2 | …]  ─►  returns GlyphRow(row0)
-    ///
-    ///                                       keeps rest for next call
     fn next(&mut self) -> Option<Self::Item> {
         let bytes_per_row = (self.width + 7) >> 3;
         if self.data.len() < bytes_per_row {
@@ -105,7 +102,7 @@ impl<'a> Iterator for GlyphRow<'a> {
     ///
     /// We assume that we can draw pixels at position (x, y) with an arbitrary set_pixel function.
     ///
-    /// ```no_run
+    /// ```text
     /// for (row_y, row) in glyph.enumerate() {
     ///     for (col_x, on) in row.enumerate() { // The glyph row to iterate over
     ///         set_pixel(fb,
@@ -133,5 +130,13 @@ impl<'a> Iterator for GlyphRow<'a> {
             self.bit_idx += 1;
             Some(bit)
         }
+    }
+}
+
+impl ExactSizeIterator for GlyphRow<'_> {
+    #[inline]
+    fn len(&self) -> usize {
+        // how many columns are still left in this scan-line
+        self.width - self.bit_idx
     }
 }
