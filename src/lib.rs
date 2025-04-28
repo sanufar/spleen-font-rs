@@ -20,6 +20,8 @@
 //!
 //! ## Quick start
 //!
+//! This example assumes that you have a framebuffer and a function to set pixels.
+//!
 //! ```no_run
 //! # use spleen_font::*;
 //! # fn set_pixel(_: &mut [u8], _: usize, _: usize, _: bool) {}
