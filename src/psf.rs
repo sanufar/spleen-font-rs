@@ -58,7 +58,16 @@ impl<'a> PSF2Font<'a> {
     /// Creates a new PSF2 font from a byte slice.
     /// Parses out header and validates, populates glyph and unicode mapping data.
     pub fn new(data: &'a [u8]) -> Result<Self, &'static str> {
-        let header = PSF2Header::from_bytes(data)?;
+        let header = match PSF2Header::from_bytes(data) {
+            Ok(header) => header,
+            Err(_) => {
+                if Self::is_psf1(data) {
+                    Self::psf1_to_header(data)?
+                } else {
+                    return Err("Unsupported format - Invalid PSF1 header");
+                }
+            }
+        };
 
         // Calculate offsets and ensure data is valid
         let glyphs_offset = header.header_size as usize;
@@ -71,7 +80,11 @@ impl<'a> PSF2Font<'a> {
 
         // Extract glyph data and unicode mapping
         let glyphs = &data[glyphs_offset..unicode_offset];
-        let unicode_mapping = &data[unicode_offset..];
+        let unicode_mapping = if header.flags & 1 != 0 {
+            &data[unicode_offset..]
+        } else {
+            &[]
+        };
 
         Ok(Self {
             height: header.height,
@@ -82,6 +95,30 @@ impl<'a> PSF2Font<'a> {
             glyphs,
             unicode_mapping,
             cache: Cache::new(),
+        })
+    }
+
+    fn is_psf1(data: &[u8]) -> bool {
+        data.len() >= 4 && data[0] == 0x36 && data[1] == 0x04
+    }
+
+    fn psf1_to_header(data: &[u8]) -> Result<PSF2Header, &'static str> {
+        if !Self::is_psf1(data) {
+            return Err("bad PSF1 magic");
+        }
+        let charsize = data[2] as u32;
+        let mode = data[3];
+        let num_glyphs = if mode & 0x01 != 0 { 512 } else { 256 };
+
+        Ok(PSF2Header {
+            magic: PSF2_MAGIC, // dummy value so rest of code accepts it
+            version: 0,
+            header_size: 4,
+            flags: if mode & 0x02 != 0 { 1 } else { 0 }, // unicode flag
+            num_glyphs,
+            bytes_per_glyph: charsize,
+            height: charsize,
+            width: 8,
         })
     }
 
@@ -187,18 +224,14 @@ impl<'a> PSF2Font<'a> {
     /// Returns glyph data for a given glyph index.
     /// If the index is out of bounds, returns None.
     #[inline]
-    fn glyph_by_idx(&self, idx: u32) -> Option<&'a [u8]> {
-        if idx < self.num_glyphs {
-            let offset = u64::from(self.header_size)
-                .checked_add(u64::from(idx) * u64::from(self.bytes_per_glyph))?;
-
-            let end = offset.checked_add(u64::from(self.bytes_per_glyph))?;
-            let (offset, end) = (offset as usize, end as usize);
-
-            self.glyphs.get(offset..end)
-        } else {
-            None
+    pub fn glyph_by_idx(&self, idx: u32) -> Option<&'a [u8]> {
+        if idx >= self.num_glyphs {
+            return None;
         }
+
+        let off = (idx * self.bytes_per_glyph) as usize;
+        let end = off + self.bytes_per_glyph as usize;
+        self.glyphs.get(off..end)
     }
 }
 
