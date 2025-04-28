@@ -84,7 +84,30 @@ pub enum Size {
     S32x64,
 }
 
-/// Array of `(font_blob, Size)` for the six bundled Spleen variants.
+#[cfg(feature = "s5x8")]
+pub const FONT_5X8: &[u8] = include_bytes!("../fonts/spleen-5x8.psfu");
+#[cfg(feature = "s6x12")]
+pub const FONT_6X12: &[u8] = include_bytes!("../fonts/spleen-6x12.psfu");
+#[cfg(feature = "s8x16")]
+pub const FONT_8X16: &[u8] = include_bytes!("../fonts/spleen-8x16.psfu");
+#[cfg(feature = "s12x24")]
+pub const FONT_12X24: &[u8] = include_bytes!("../fonts/spleen-12x24.psfu");
+#[cfg(feature = "s16x32")]
+pub const FONT_16X32: &[u8] = include_bytes!("../fonts/spleen-16x32.psfu");
+#[cfg(feature = "s32x64")]
+pub const FONT_32X64: &[u8] = include_bytes!("../fonts/spleen-32x64.psfu");
+
+#[cfg(feature = "all")]
+pub static FONTS: &[(&[u8], Size)] = &[
+    (include_bytes!("../fonts/spleen-5x8.psfu"), Size::S5x8),
+    (include_bytes!("../fonts/spleen-6x12.psfu"), Size::S6x12),
+    (include_bytes!("../fonts/spleen-8x16.psfu"), Size::S8x16),
+    (include_bytes!("../fonts/spleen-12x24.psfu"), Size::S12x24),
+    (include_bytes!("../fonts/spleen-16x32.psfu"), Size::S16x32),
+    (include_bytes!("../fonts/spleen-32x64.psfu"), Size::S32x64),
+];
+
+#[cfg(test)]
 pub static FONTS: &[(&[u8], Size)] = &[
     (include_bytes!("../fonts/spleen-5x8.psfu"), Size::S5x8),
     (include_bytes!("../fonts/spleen-6x12.psfu"), Size::S6x12),

@@ -8,5 +8,15 @@ repository = "https://github.com/sanufar/spleen-font-rs/"
 readme = "README.md"
 categories = ["no-std", "graphics", "rendering"]
 keywords = ["font", "bitmap", "psf2", "spleen", "no_std"]
+default-features = false
+
+[features]
+s5x8 = []                                                      # include only the 5×8 blob
+s6x12 = []
+s8x16 = []
+s12x24 = []
+s16x32 = []
+s32x64 = []
+all = ["s5x8", "s6x12", "s8x16", "s12x24", "s16x32", "s32x64"]
 
 [dependencies]
