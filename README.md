@@ -22,7 +22,7 @@ UTF-8 ──► `PSF2Font` ──────► `Glyph<'_>` ──────�
 
 ## Quick start
 
-This example assumes that you have a framebuffer and a function to set pixels.
+This example assumes that you have a framebuffer and a function to set pixels, and that you have enabled the `s8x16` feature in your `Cargo.toml`.
 
 ```rust
 // Pick a bundled font (8×16 is a good default) from the feature list (below)
@@ -56,6 +56,13 @@ s32x64 | FONT_32X64 | 128 KiB
 all | all of the above | 184 KiB
 
 Each entry is a raw byte slice **`&[u8]`** where the slice is the raw PSF-2 file embedded via `include_bytes!`.
+
+By default, no font is enabled. Enabling a font in your Cargo.toml should look like this:
+
+```toml
+[dependencies]
+spleen-font = { version = "0.1", features = ["s8x16"] }
+```
 
 ## Re-exports
 

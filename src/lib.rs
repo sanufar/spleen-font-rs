@@ -18,27 +18,37 @@
 //! * < 2 KiB RAM: 64-entry ring cache + iterator state.
 //! * Exposes only data; pixel drawing/framebuffer manipulation is left to the user.
 //!
-//! ## Quick## Quick start
+//! ## Quick start
 //! This example assumes that you have a framebuffer and a function to set pixels.
 //!
 //! ```rust
-//! // Pick a bundled font (8×16 is a good default) from the feature list (below)
-//! use spleen_font::{PSF2Font, FONT_8X16};
-//! fn set_pixel(_: &mut [u8], _: usize, _: usize, _: bool) {}
+//! fn main() {
+//!     // only compiled & run when `s8x16` is enabled
+//!     #[cfg(feature = "s8x16")] {
+//!         use spleen_font::{PSF2Font, FONT_8X16};
+//!         fn set_pixel(_: &mut [u8], _: usize, _: usize, _: bool) { }
 //!
-//! let mut font  = PSF2Font::new(FONT_8X16).unwrap();
+//!         let mut font       = PSF2Font::new(FONT_8X16).unwrap();
+//!         let mut framebuffer = [0u8; 1024];
 //!
-//! // Look up a glyph (cached) and blit it.
-//! if let Some(glyph) = font.glyph_for_utf8("é".as_bytes()) {
-//!     for (row_y, row) in glyph.enumerate() {
-//!         for (col_x, on) in row.enumerate() {
-//!             set_pixel(framebuffer, col_x, row_y, on);
+//!         if let Some(glyph) = font.glyph_for_utf8("é".as_bytes()) {
+//!             for (row_y, row) in glyph.enumerate() {
+//!                 for (col_x, on) in row.enumerate() {
+//!                     set_pixel(&mut framebuffer, col_x, row_y, on);
+//!                 }
+//!             }
 //!         }
 //!     }
 //! }
 //! ```
 //!
-//! ## Features
+//! To test this example, run:
+//!
+//! ```text
+//! cargo test --doc --features s8x16
+//! ```
+//!
+//! ## Feature gates
 //!
 //! To reduce the overall footprint, each of the six fonts is gated behind a feature. Note that while this does not reduce the size of the crate on crates.io, it does reduce the size of the compiled binary - only the blob for the selected font you enable will be included in the final binary.
 //!
@@ -53,6 +63,13 @@
 //! all | all of the above | 184 KiB
 //!
 //! Each entry is a raw byte slice **`&[u8]`** where the slice is the raw PSF-2 file embedded via `include_bytes!`.
+//!
+//! By default, no font is enabled. Enabling a font in your Cargo.toml should look like this:
+//!
+//! ```toml
+//! [dependencies]
+//! spleen-font = { version = "0.1", features = ["s8x16"] }
+//! ```
 //!
 //! ## Re-exports
 //!
