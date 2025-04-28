@@ -4,10 +4,10 @@ This crate ships the six **Spleen** fixed-width fonts and gives you a
 panic-free, heap-free API to render them on any framebuffer.
 
 ```text
-              glyph lookup                 row iterator                     bit iterator
+              glyph lookup        row iterator         bit iterator
             ┌──────────────┐   ┌────────────────┐   ┌────────────────┐
-UTF-8 ──► `PSF2Font` ──────► `Glyph<'_>` ───────►    `GlyphRow<'_>`    ───────►       bool
-            │          (cache)      │   │            one scan-line  │   │       one pixel (fg/bg)   │
+UTF-8 ──► `PSF2Font` ──────► `Glyph<'_>` ───────►  `GlyphRow<'_>` ────► bool
+            │    (cache)   │   |  one scan-line │   |    one pixel   │
             └──────────────┘   └────────────────┘   └────────────────┘
 ```
 
